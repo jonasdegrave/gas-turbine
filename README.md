@@ -1,4 +1,4 @@
-<div>
+<div><center>
 <table><tr>
 <td>
 <img src="images/ITA_logo.png" alt="Instituto Tecnológico da Aeronáutica (ITA)" style="width: 200px;"/>
@@ -7,7 +7,7 @@
 <img src="images/Embraer_logo.png" alt="Empresa Brasileira de Aeronáutica (Embraer)" style="width: 200px;"/>
     </td>
     </tr></table
-</div>
+</center></div>
 
 # EMBRAER | ITA
 
