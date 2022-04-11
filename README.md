@@ -17,14 +17,14 @@
 
 ### Autores:
 
-* Camilla Santos ( 'email' )
-* Eloi Antonio ( 'email' )
-* Gabriel Henrique ( 'email' )
-* Jonas Degrave (jonasdegrave@poli.ufrj.br)
-* Lucas Schroeder  ( 'email' )
-* Matheus Monteverde ( 'email' )
-* Orlando Gabriel ( 'email' )
-* Rafael Bayão ( 'email' )
+* Camilla Santos
+* Eloi Antonio
+* Gabriel Henrique
+* Jonas Degrave
+* Lucas Schroeder
+* Matheus Monteverde
+* Orlando Gabriel
+* Rafael Bayão
 
 ## Turbojato:
 
