@@ -13,3 +13,19 @@ conda activate embraer
 
 # Installs project requirements;
 pip install -r requirements.txt
+
+# Configure git user.name and user.email;
+
+echo ""
+echo "Escreva seu 'Nome Sobrenome':"
+read username
+git config user.name "$username"
+
+echo ""
+echo "Escreva seu 'email':"
+read email
+git config user.email "$email"
+
+echo ""
+echo "Ambiente Python e GIT configurados. Pronto!"
+echo ""
