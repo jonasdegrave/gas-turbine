@@ -9,6 +9,7 @@ pip install conda
 conda create --name embraer python=3.10
 
 # Activates project environment;
+## OBS: Isso aqui dá pau às vezes.. nesse caso, comentar essa linha e digitar ela no terminal manualmente!
 conda activate embraer
 
 # Installs project requirements;
