@@ -28,20 +28,20 @@
 
 ## Turbojato:
 
-* a
-* b
+* Camilla Santos
+* Orlando Gabriel
 
 ## Turbofan:
 
-* c
-* d
+* Lucas Schroeder
+* Eloi Antonio
 
 ## Turbohélice:
 
-* e
-* f
+* Rafael Bayão
+* Matheus Monteverde
 
 ## Ramjet:
 
-* g
-* h
+* Jonas Degrave
+* Gabriel Henrique
