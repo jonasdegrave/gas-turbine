@@ -1,9 +1,6 @@
 import thermal_process as tp
 import numpy as np
 
-def _generate_exp(n, value):
-    return np.array([value**i for i in range(0,n)][::-1])
-
 
 class Diffuser_Adiab(tp.SpeedInThermalProcess):
     """
@@ -188,20 +185,19 @@ class Fan(Compressor):
         pass
 
     def set_n1(self, n1):
+        a_coef_constants = [-0.00179, 0.00687, 0.5]
+        a_coef = np.polyval(a_coef_constants, self.bypass_ratio)
 
-        a_coef = np.array([-0.00179, 0.00687, 0.5])
-        a_pow = _generate_exp(len(a_coef), self.bypass_ratio)
+        b_coef = -4.3317E-2
 
-        c_coef = np.array([ 0.011, 0.53782])
-        c_pow = _generate_exp(len(c_coef), self.bypass_ratio)
+        c_coef_constants = [ 0.011, 0.53782]
+        c_coef = np.polyval(c_coef_constants, self.bypass_ratio)
         
-        prc_constants = np.array([a_coef @ a_pow, - 4.3317E-2, c_coef@c_pow])
-        n1_pow = _generate_exp(len(prc_constants), n1)
-        self.prc = self._prc0 * prc_constants @ n1_pow
+        prc_constants = np.array([a_coef, b_coef, c_coef])
+        self.prc = self._prc0 * np.polyval(prc_constants, n1)
 
         n_c_constants = [-6.6663, 17.752, - 17.469, 7.7181, - 0.32985]
-        n1_pow = _generate_exp(len(n_c_constants), n1)
-        self.n_c = self._n_c0 * n_c_constants @ n1_pow
+        self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
     def sumarise(self):
         index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf']
@@ -253,8 +249,7 @@ class Turbine(tp.StaticThermalProcess):
 
     def set_n2(self, n2):
         n_t_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
-        n2_pow = _generate_exp(len(n_t_constants), n2)
-        self.n_t = self._n_t0 * n_t_constants @ n2_pow
+        self.n_t = self._n_t0 * np.polyval(n_t_constants, n2)
 
     def sumarise(self, turbo_fan=False):
         if turbo_fan:
@@ -322,8 +317,7 @@ class FanTurbine(Turbine):
 
     def set_n1(self, n1):
         n_t_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
-        n1_pow = _generate_exp(len(n_t_constants), n1)
-        self.n_t = self._n_t0 * n_t_constants @ n1_pow
+        self.n_t = self._n_t0 * np.polyval(n_t_constants, n1)
 
     def sumarise(self):
         index = ['tet', 'pet', 't05', 'p05', 'gamma_tf', 'n_tf']
@@ -370,12 +364,10 @@ class CombustionChamber(tp.StaticThermalProcess):
 
     def set_n2(self, n2):
         n_b_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
-        n2_pow = _generate_exp(len(n_b_constants), n2)
-        self.n_b = self._n_b0 * n_b_constants @ n2_pow
+        self.n_b = self._n_b0 * np.polyval(n_b_constants, n2)
 
         t0f_constants = np.array([8.1821E-1, -2.2401E-1, 4.1842E-1])
-        n2_pow = _generate_exp(len(t0f_constants), n2)
-        self.t0f = self._t0f0 * t0f_constants @ n2_pow
+        self.t0f = self._t0f0 * np.polyval(t0f_constants, n2)
 
     def sumarise(self):
         index = ['t03', 'p03', 't04', 'p04', 'gamma_b', 'n_b', 'pc_comb', 'cp_comb']
