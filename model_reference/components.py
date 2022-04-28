@@ -158,15 +158,11 @@ class Compressor(tp.StaticThermalProcess):
 
     def set_n2(self, n2):
         prc_constants = np.array([-6.073, 1.4821E1, -1.0042E1, 2.2915])
-        #n2_pow = _generate_exp(len(prc_constants), n2)
-        np.polyval(prc_constants, n2)
-        #self.prc = self._prc0 * prc_constants @ n2_pow
+        self.prc = np.polyval(prc_constants, n2) * self._prc0
 
         n_c_constants = [ -1.1234, 2.1097, 1.8617E-2]
-        self.n_c = np.polyval(n_c_constants, n2)
+        self.n_c = np.polyval(n_c_constants, n2) * self._n_c0
 
-        # n2_pow = _generate_exp(len(n_c_constants), n2)
-        # self.n_c = self._n_c0 * n_c_constants @ n2_pow
 
     def sumarise(self):
         index = ['t02', 'p02', 't03', 'p03', 'gamma_c', 'n_c', 'prc']
