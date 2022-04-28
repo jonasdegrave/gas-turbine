@@ -369,8 +369,9 @@ class FreeTurbine(Turbine):
         p0f = self.p0i/self.prt
 
         return p0f
-
-    def get_specific_work(self):
+    
+    @property
+    def turbine_specific_work(self):
         pass
 
     def set_n2(self, n2):

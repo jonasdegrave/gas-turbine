@@ -22,9 +22,9 @@ class TurboJet:
             data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b')
         )
 
-        self.turbine = comp.Turbine(self.combustion_chamber.t0f, self.combustion_chamber.p0f,
+        self.turbine = comp.FreeTurbine(self.combustion_chamber.t0f, self.combustion_chamber.p0f,
             data.get('gamma_t'), data.get('r'),
-            data.get('n_t'), self.compressor
+            data.get('n_t'), self.compressor, data.get('prt')
         )
 
         self.nozzle = comp.Nozzle_Adiab(self.turbine.t0f, self.turbine.p0f,
