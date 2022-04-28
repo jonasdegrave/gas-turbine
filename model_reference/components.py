@@ -325,6 +325,70 @@ class FanTurbine(Turbine):
         return dict(zip(index, values))
 
 
+class FreeTurbine(Turbine):
+    """
+    A class to represent a Free Turbine.
+
+    Parameters
+    ----------
+        t0i: Initial total (stagnation) temperature.
+        p0i: Initial total (stagnation) pressure.
+        gamma: Process cp/cv.
+        r: Gas constant.
+        n_t: The turbine efficiency.
+        bypass_ratio: The bypass_ratio for Turbofans.
+    """
+    def __init__(self, t0i, p0i, gamma, r, n_t, prt):
+        super().__init__(t0i, p0i, gamma, r)
+        self.n_t = n_t
+        self._n_t0 = n_t
+        self._prt = prt
+        self.prt = prt
+
+    def get_t0f(self):
+        """
+        A method to determine the final total (stagnation) temperature for the turbine.
+
+        Returns
+        ----------
+            The turbine final total (stagnation) temperature.
+        """
+        exp = (self._gamma - 1) / self._gamma
+        t0f = self.t0i * (1 - self.n_t * (1 - (1/self.prt)**exp))
+
+        return t0f
+
+    def get_p0f(self):
+        """
+        A method to determine the final total (stagnation) pressure for the turbine.
+
+        Returns
+        ----------
+            The turbine final total (stagnation) pressure.
+        """
+        p0f = self.p0i/self.prt
+
+        return p0f
+
+    def get_specific_work(self):
+        pass
+
+    def set_n2(self, n2):
+        prt_constants = [-1.8063E+01, 4.2469E+01, -3.1480E+01, 8.0681E+00]
+        self.prt = self._prt * np.polyval(prt_constants, n2)
+        
+        n_t_constants = [1.9062E+01, -5.2456E+01, 4.7887E+01, -1.3489E+01]
+        self.n_t = self._n_t0 * np.polyval(n_t_constants, n2)
+
+    def set_n1(self, n1):
+        pass
+
+    def sumarise(self):
+        index = ['tet', 'pet', 't05', 'p05', 'gamma_tf', 'n_tf']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_t]
+        return dict(zip(index, values))
+
+
 class CombustionChamber(tp.StaticThermalProcess):
     """
     A class to represent a Combustion Chamber.
