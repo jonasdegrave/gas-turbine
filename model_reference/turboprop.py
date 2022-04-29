@@ -1,7 +1,7 @@
 import components as comp
 import pandas as pd
 
-class TurboJet:
+class TurboProp:
     def __init__(self, data:dict):
         self._n2 = 0
 
@@ -24,7 +24,7 @@ class TurboJet:
 
         self.turbine = comp.FreeTurbine(self.combustion_chamber.t0f, self.combustion_chamber.p0f,
             data.get('gamma_t'), data.get('r'),
-            data.get('n_t'), self.compressor, data.get('prt')
+            data.get('n_t'), data.get('prt')
         )
 
         self.nozzle = comp.Nozzle_Adiab(self.turbine.t0f, self.turbine.p0f,

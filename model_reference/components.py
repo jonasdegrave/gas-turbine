@@ -325,7 +325,7 @@ class FanTurbine(Turbine):
         return dict(zip(index, values))
 
 
-class FreeTurbine(Turbine):
+class FreeTurbine(tp.StaticThermalProcess):
     """
     A class to represent a Free Turbine.
 
