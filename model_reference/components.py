@@ -182,7 +182,9 @@ class Fan(Compressor):
         self.bypass_ratio = bypass_ratio
 
     def set_n2(self, n2):
-        pass
+        n2_coef = [1.4166E+00, -4.0478E-01]
+
+        self.n1 = np.polyval(n2_coef, n2)
 
     def set_n1(self, n1):
         a_coef_constants = [-0.00179, 0.00687, 0.5]
@@ -338,12 +340,13 @@ class FreeTurbine(tp.StaticThermalProcess):
         n_t: The turbine efficiency.
         bypass_ratio: The bypass_ratio for Turbofans.
     """
-    def __init__(self, t0i, p0i, gamma, r, n_t, prt):
+    def __init__(self, t0i, p0i, gamma, r, n_t, prt, cp):
         super().__init__(t0i, p0i, gamma, r)
         self.n_t = n_t
         self._n_t0 = n_t
         self._prt = prt
         self.prt = prt
+        self.cp = cp
 
     def get_t0f(self):
         """
@@ -355,7 +358,6 @@ class FreeTurbine(tp.StaticThermalProcess):
         """
         exp = (self._gamma - 1) / self._gamma
         t0f = self.t0i * (1 - self.n_t * (1 - (1/self.prt)**exp))
-
         return t0f
 
     def get_p0f(self):
@@ -370,10 +372,6 @@ class FreeTurbine(tp.StaticThermalProcess):
 
         return p0f
     
-    @property
-    def turbine_specific_work(self):
-        pass
-
     def set_n2(self, n2):
         prt_constants = [-1.8063E+01, 4.2469E+01, -3.1480E+01, 8.0681E+00]
         self.prt = self._prt * np.polyval(prt_constants, n2)
@@ -385,9 +383,22 @@ class FreeTurbine(tp.StaticThermalProcess):
         pass
 
     def sumarise(self):
-        index = ['tet', 'pet', 't05', 'p05', 'gamma_tf', 'n_tf']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_t]
+        index = ['t06', 'p06', 'gamma_tf', 'n_tf']
+        values = [self.t0f, self.p0f, self._gamma, self.n_t]
         return dict(zip(index, values))
+    
+    @property
+    def specific_work(self):
+        return (self.t0i - self.t0f)*(self.cp)
+    
+    
+    @property
+    def t0f(self):
+        return self.get_t0f()
+
+    @property
+    def p0f(self):
+        return self.get_p0f()
 
 
 class CombustionChamber(tp.StaticThermalProcess):

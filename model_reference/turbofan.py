@@ -1,7 +1,7 @@
 import components as comp
 import pandas as pd
 
-class TurboJet:
+class TurboFan:
     def __init__(self, data:dict):
         self._n2 = 1
 

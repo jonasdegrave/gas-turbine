@@ -3,7 +3,7 @@ import pandas as pd
 
 class TurboJet:
     def __init__(self, data:dict):
-        self._n2 = 0
+        self._n2 = 1
 
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
