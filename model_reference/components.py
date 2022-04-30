@@ -86,8 +86,9 @@ class Nozzle_Adiab(tp.SpeedOutThermalProcess):
         pf: Final static pressure.
         n_n: The nozzle efficiency.
     """
-    def __init__(self, t0i, p0i, gamma, r, pf, n_n):
+    def __init__(self, t0i, p0i, gamma, r, pf, n_n, fan_nozzle=False):
         super().__init__(t0i, p0i, gamma, r, pf)
+        self.fan = fan_nozzle
         self.n_n = n_n
 
     def get_tf(self):
@@ -102,7 +103,11 @@ class Nozzle_Adiab(tp.SpeedOutThermalProcess):
         return self.t0i * (1 - self.n_n * (1 - ts_ratio))
 
     def sumarise(self):
-        index = ['t06', 'p06', 'tf', 'pa', 'gamma_n', 'n_n', 'uf']
+        
+        if self.fan:
+            index = ['t08', 'p08', 'tff', 'pa', 'gamma_fn', 'n_fn', 'u_sf']
+        else:
+            index = ['t06', 'p06', 'tf', 'pa', 'gamma_n', 'n_n', 'u_s']
         values = [self.t0i, self.p0i, self.get_tfs(), self._pf, self._gamma, self.n_n, self.u_s]
         return dict(zip(index, values))
 
@@ -179,14 +184,19 @@ class Compressor(tp.StaticThermalProcess):
 class Fan(Compressor):
     def __init__(self, t0i, p0i, gamma, r, n_c, prc, bypass_ratio):
         super().__init__(t0i, p0i, gamma, r, n_c, prc)
-        self.bypass_ratio = bypass_ratio
+        self._bypass_ratio0 = bypass_ratio
+        self.bypass_ratio = self._bypass_ratio0
 
     def set_n2(self, n2):
-        n2_coef = [1.4166E+00, -4.0478E-01]
-
-        self.n1 = np.polyval(n2_coef, n2)
+        n1_constants = np.array([1.4166, -4.0478E-01])
+        n1 = np.polyval(n1_constants, n2)
+        self.set_n1(n1)
 
     def set_n1(self, n1):
+        
+        bypass_ratio_constants = [-8.3241E-1, 3.8824E-1, 1.4263]
+        self.bypass_ratio = np.polyval(bypass_ratio_constants, self._bypass_ratio0) * self._bypass_ratio0
+
         a_coef_constants = [-0.00179, 0.00687, 0.5]
         a_coef = np.polyval(a_coef_constants, self.bypass_ratio)
 
@@ -221,11 +231,12 @@ class Turbine(tp.StaticThermalProcess):
         compressor: The compressor in the same axis.
         bypass_ratio: The bypass_ratio for Turbofans.
     """
-    def __init__(self, t0i, p0i, gamma, r, n_t, compressor: Compressor):
+    def __init__(self, t0i, p0i, gamma, r, n_t, compressor: Compressor, turbo_fan=False):
         super().__init__(t0i, p0i, gamma, r)
         self.n_t = n_t
         self._n_t0 = n_t
         self.comp = compressor
+        self.is_turbo_fan = turbo_fan
 
     def get_t0f(self):
         """
@@ -253,8 +264,8 @@ class Turbine(tp.StaticThermalProcess):
         n_t_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
         self.n_t = self._n_t0 * np.polyval(n_t_constants, n2)
 
-    def sumarise(self, turbo_fan=False):
-        if turbo_fan:
+    def sumarise(self):
+        if self.is_turbo_fan:
             index = ['t04', 'p04', 'tet', 'pet', 'gamma_t', 'n_t']
         else:
             index = ['t04', 'p04', 't05', 'p05', 'gamma_t', 'n_t']
@@ -315,7 +326,9 @@ class FanTurbine(Turbine):
         return self.p0i * (1 - 1/self.n_t * (1 - t_ratio)) ** exp
 
     def set_n2(self, n2):
-        pass
+        n1_constants = np.array([1.4166, -4.0478E-01])
+        n1 = np.polyval(n1_constants, n2)
+        self.set_n1(n1)
 
     def set_n1(self, n1):
         n_t_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
