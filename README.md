@@ -26,22 +26,21 @@
 * Orlando Gabriel
 * Rafael Bayão
 
-## Turbojato:
-
-* Camilla Santos
-* Orlando Gabriel
-
-## Turbofan:
-
-* Lucas Schroeder
-* Eloi Antonio
-
-## Turbohélice:
-
+    
+## Responsáveis por cada questão:
+    
+### Questão 1:
 * Rafael Bayão
 * Matheus Monteverde
 
-## Ramjet:
-
+### Questão 2:
 * Jonas Degrave
+* Lucas Schroeder
+    
+### Questão 3:
 * Gabriel Henrique
+* Eloi Antonio
+    
+### Questão 4:
+* Camilla Santos
+* Orlando Gabriel
