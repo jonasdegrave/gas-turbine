@@ -61,4 +61,23 @@ class TurboJet:
 
         return data.sort_index().to_frame(name=self._n2)
 
+    def sumarise_results(self):
+        data = pd.Series(dtype='float64')
 
+        
+        list_of_parameters = ['specific_thrust', 'TSFC']
+
+        for parameter in list_of_parameters:
+            result = getattr(self, parameter)
+            data.loc[parameter] = result
+
+
+        return data.sort_index().to_frame(name=self._n2)
+
+    @property
+    def specific_thrust(self):
+        return ((1+self.combustion_chamber.f)*self.nozzle.u_s-self.air_entrance._ui)
+
+    @property
+    def TSFC(self):
+        return self.combustion_chamber.f / self.specific_thrust
