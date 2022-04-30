@@ -459,8 +459,8 @@ class CombustionChamber(tp.StaticThermalProcess):
         self.t0f = self._t0f0 * np.polyval(t0f_constants, n2)
 
     def sumarise(self):
-        index = ['t03', 'p03', 't04', 'p04', 'gamma_b', 'n_b', 'pc_comb', 'cp_comb']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_b, self._pc, self._cp]
+        index = ['t03', 'p03', 't04', 'p04', 'gamma_b', 'n_b', 'pc_comb', 'cp_comb', 'f']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_b, self._pc, self._cp, self.f]
         return dict(zip(index, values))
 
     @property
