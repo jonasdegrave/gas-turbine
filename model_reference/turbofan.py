@@ -197,7 +197,7 @@ class TurboFan:
             'hot_specific_thrust',
             'mass_flow',
             'hot_mass_flow',
-            'cold_mas_flow']
+            'cold_mass_flow']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
