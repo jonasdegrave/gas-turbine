@@ -201,7 +201,7 @@ class Fan(Compressor):
     def set_n1(self, n1):
         
         bypass_ratio_constants = [-8.3241E-1, 3.8824E-1, 1.4263]
-        self.bypass_ratio = np.polyval(bypass_ratio_constants, self._bypass_ratio0) * self._bypass_ratio0
+        self.bypass_ratio = np.polyval(bypass_ratio_constants, n1) * self._bypass_ratio0
 
         a_coef_constants = [-0.00179, 0.00687, 0.5]
         a_coef = np.polyval(a_coef_constants, self.bypass_ratio)
@@ -218,8 +218,8 @@ class Fan(Compressor):
         self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
     def sumarise(self):
-        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf','n1']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc, self._n1]
+        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf','n1','bypass_ratio']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc, self._n1, self.bypass_ratio]
         return dict(zip(index, values))
 
 
