@@ -113,8 +113,8 @@ class TurboFan:
 
         self.fan_nozzle = comp.Nozzle_Adiab(
             self.fan.t0f, self.fan.p0f,
-            data.get('gamma_fn'), data.get('r'),
-            data.get('pa'), data.get('n_fn')
+            data.get('gamma_nf'), data.get('r'),
+            data.get('pa'), data.get('n_nf')
         )
 
         self.components = [
