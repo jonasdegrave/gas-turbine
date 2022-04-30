@@ -51,10 +51,23 @@ class TurboFan:
             speed = 0
 
         self._n2 = 1
-        self._mass_flow_sea_level = data.get('mass_flow')
-        self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
-        self._mass_flow = self._mass_flow0
-        self._hot_mass_flow = self._mass_flow / (data.get('bypass_ratio') + 1)
+
+        if data.get("mass_flow") is None:
+            self._has_mass_flow = False
+        else:
+            self._has_mass_flow = True
+
+        if self._has_mass_flow:
+            self._mass_flow_sea_level = data.get('mass_flow')
+            self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
+            self._mass_flow = self._mass_flow0
+            self._hot_mass_flow = self._mass_flow / (data.get('bypass_ratio') + 1)
+        else:
+            self._mass_flow = np.nan
+            self._hot_mass_flow = np.nan
+
+        
+        
 
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
@@ -125,7 +138,8 @@ class TurboFan:
         self.turbine.set_n2(n2)
         self.fan_turbine.set_n2(n2)
 
-        self._set_n2_mass_flow(n2)
+        if self._has_mass_flow:
+            self._set_n2_mass_flow(n2)
 
         self._n2 = n2
 
@@ -177,7 +191,7 @@ class TurboFan:
         
         list_of_parameters = [
             'specific_thrust',
-            'thust_total',
+            'thrust_total',
             'TSFC',
             'cold_specific_thrust',
             'hot_specific_thrust',
