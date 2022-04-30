@@ -28,6 +28,9 @@ class TurboJet:
         n_b: efficiency of the Combustion Chamber;
         n_t: efficiency of the Turbine;
         n_n: efficiency of the Nozzle;
+        prc: Compression rate;
+        pc_fuel: Heat of Combustion of the fuel;
+        cp_fuel: Specific Heat in the combustion chamber;
         r: the air Gas Constant.
     """
     def __init__(self, data:dict):
