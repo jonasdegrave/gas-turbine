@@ -1,14 +1,55 @@
 import components as comp
 import pandas as pd
+from thermal_process import u_from_mach
+import numpy as np
+
+def correct_mass_flow(mass_flow, ta, pa):
+    return mass_flow * (288.15/101.325) * (pa/ta)
 
 class TurboJet:
+    """
+    A class representative of a Turbo Jet Engine.
+
+    Parameters
+    ----------
+    data: dict
+        A dictionary with all the required input parameters for a TurboJet model.
+        ta: Ambient Temperature;
+        pa: Ambient Pressure;
+        t04: Temperature in the combustion chamber exit;
+        u_i or mach: speed in m/s or mach number repectively;
+        gamma_d: cp/cv in the Diffuser;
+        gamma_c: cp/cv in the Compressor;
+        gamma_b: cp/cv in the Combustion Chamber;
+        gamma_t: cp/cv in the Turbine;
+        gamma_n: cp/cv in the Nozzle;
+        n_d: efficiency of the Diffuser;
+        n_c: efficiency of the Compressor;
+        n_b: efficiency of the Combustion Chamber;
+        n_t: efficiency of the Turbine;
+        n_n: efficiency of the Nozzle;
+        r: the air Gas Constant.
+    """
     def __init__(self, data:dict):
+        if "u_in" in data.keys():
+            speed = data.get("u_in")
+        elif "mach" in data.keys():
+            speed = u_from_mach(
+                data.get("mach"), data.get("ta"), data.get("gamma_d"), data.get("r")
+                )
+        else:
+            speed = 0
+
+        self._mass_flow_sea_level = data.get('mass_flow')
+        self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
+        self._mass_flow = self._mass_flow0
+
         self._n2 = 1
 
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
             data.get('gamma_d'), data.get('r'),
-            data.get('u_in'), data.get('n_d')
+            speed, data.get('n_d')
         )
 
         self.compressor = comp.Compressor(
@@ -33,10 +74,16 @@ class TurboJet:
         )
         self.components = [self.air_entrance, self.compressor, self.combustion_chamber, self.turbine, self.nozzle]
 
+    def _set_n2_mass_flow(self, n2):
+        coef = [-6.6970E+00, 1.7001E+01, -1.2170E+01, 2.8717E+00]
+        self._mass_flow = self._mass_flow0 * np.polyval(coef, n2)
+
     def set_n2(self, n2):
         self.compressor.set_n2(n2)
         self.combustion_chamber.set_n2(n2)
         self.turbine.set_n2(n2)
+
+        self._set_n2_mass_flow(n2)
 
         self._n2 = n2
 
@@ -52,6 +99,13 @@ class TurboJet:
         self.nozzle.t0i, self.nozzle.p0i = self.turbine.t0f, self.turbine.p0f
 
     def sumarise(self):
+        """
+        Summary of engine components parameters.
+        
+        Return
+        ------
+        A column DataFrame of all the components inlet and outlet properties for the current N2 rotation.
+        """
         data = pd.Series(dtype='float64')
 
         for i in self.components:
@@ -62,6 +116,13 @@ class TurboJet:
         return data.sort_index().to_frame(name=self._n2)
 
     def sumarise_results(self):
+        """
+        Summary of engine components parameters.
+        
+        Return
+        ------
+        A column DataFrame with the performance results for the motor in the given N2 rotation.
+        """
         data = pd.Series(dtype='float64')
 
         
