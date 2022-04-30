@@ -124,16 +124,13 @@ class TurboFan:
             'TSFC',
             'cold_specific_thrust',
             'hot_specific_thrust',
-            '_mass_flow',
-            '_hot_mass_flow']
+            'mass_flow',
+            'hot_mass_flow',
+            'cold_mas_flow']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
             data.loc[parameter] = result
-
-        data.index[4] = 'mass_flow'
-        data.index[5] = 'hot_mass_flow'
-        data.loc['fan_nozzle_mass_flow'] = self._mass_flow * self.fan.bypass_ratio
 
         return data.sort_index().to_frame(name=self._n2)
 
@@ -163,5 +160,17 @@ class TurboFan:
             thrust = self.specific_thrust * self._mass_flow
             return thrust
         return None
+
+    @property
+    def mass_flow(self):
+        return self._mass_flow
+
+    @property
+    def hot_mass_flow(self):
+        return self._hot_mass_flow
+
+    @property
+    def cold_mass_flow(self):
+        return self.mass_flow - self.hot_mass_flow
 
 
