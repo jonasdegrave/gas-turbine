@@ -43,9 +43,17 @@ class TurboJet:
         else:
             speed = 0
 
-        self._mass_flow_sea_level = data.get('mass_flow')
-        self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
-        self._mass_flow = self._mass_flow0
+        if data.get("mass_flow") is None:
+            self._has_mass_flow = False
+        else:
+            self._has_mass_flow = True
+
+        if self._has_mass_flow:
+            self._mass_flow_sea_level = data.get('mass_flow')
+            self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
+            self._mass_flow = self._mass_flow0
+        else:
+            self._mass_flow = np.nan
 
         self._n2 = 1
 
@@ -86,7 +94,8 @@ class TurboJet:
         self.combustion_chamber.set_n2(n2)
         self.turbine.set_n2(n2)
 
-        self._set_n2_mass_flow(n2)
+        if self._has_mass_flow:
+            self._set_n2_mass_flow(n2)
 
         self._n2 = n2
 
@@ -129,7 +138,7 @@ class TurboJet:
         data = pd.Series(dtype='float64')
 
         
-        list_of_parameters = ['specific_thrust', 'TSFC', 'thust_total','mass_flow']
+        list_of_parameters = ['specific_thrust', 'TSFC', 'thrust_total','mass_flow']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
@@ -144,7 +153,7 @@ class TurboJet:
 
     @property
     def thrust_total(self):
-        return self.specific_thrust * self._hot_mass_flow
+        return self.specific_thrust * self.mass_flow
 
     @property
     def TSFC(self):
