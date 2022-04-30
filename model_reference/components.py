@@ -298,7 +298,7 @@ class FanTurbine(Turbine):
         bypass_ratio: The bypass_ratio for Turbofans.
     """
     def __init__(self, t0i, p0i, gamma, r, n_t, compressor: Fan):
-        super().__init__(t0i, p0i, gamma, r)
+        super().__init__(t0i, p0i, gamma, r, n_t, compressor)
         self.n_t = n_t
         self._n_t0 = n_t
         self.comp = compressor
