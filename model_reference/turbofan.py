@@ -65,10 +65,7 @@ class TurboFan:
         else:
             self._mass_flow = np.nan
             self._hot_mass_flow = np.nan
-
         
-        
-
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
             data.get('gamma_d'), data.get('r'),
@@ -84,7 +81,7 @@ class TurboFan:
         self.compressor = comp.Compressor(
             self.fan.t0f, self.fan.p0f,
             data.get('gamma_c'), data.get('r'),
-            data.get('n_c'), data.get('prc')
+            data.get('n_c'), data.get('prc'), turbo_fan=True
         )
 
         self.combustion_chamber = comp.CombustionChamber(

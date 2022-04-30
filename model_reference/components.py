@@ -130,12 +130,13 @@ class Compressor(tp.StaticThermalProcess):
         n_c: The compressor efficiency.
         prc: The pressure ratio of the compressor.
     """
-    def __init__(self, t0i, p0i, gamma, r, n_c, prc):
+    def __init__(self, t0i, p0i, gamma, r, n_c, prc, turbo_fan=False):
         super().__init__(t0i, p0i, gamma, r)
         self.prc = prc
         self._prc0 = prc
         self.n_c = n_c
         self._n_c0 = n_c
+        self.is_turbo_fan = turbo_fan
 
     def get_p0f(self):
         """
@@ -167,7 +168,10 @@ class Compressor(tp.StaticThermalProcess):
 
 
     def sumarise(self):
-        index = ['t02', 'p02', 't03', 'p03', 'gamma_c', 'n_c', 'prc']
+        if self.is_turbo_fan:
+            index = ['t08', 'p08', 't03', 'p03', 'gamma_c', 'n_c', 'prc']
+        else:
+            index = ['t02', 'p02', 't03', 'p03', 'gamma_c', 'n_c', 'prc']
         values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc]
         return dict(zip(index, values))
 
