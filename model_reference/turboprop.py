@@ -1,16 +1,61 @@
 from . import components as comp
 import pandas as pd
+from .thermal_process import u_from_mach
 import numpy as np
 
 def correct_mass_flow(mass_flow, ta, pa):
     return mass_flow * (288.15/101.325) * (pa/ta)
 
 class TurboProp:
+    """
+    A class representative of a TurboProp Engine.
+
+    Parameters
+    ----------
+    data: dict
+        A dictionary with all the required input parameters for a TurboJet model.
+        mass_flow: mass flow at sea level
+        ta: Ambient Temperature;
+        pa: Ambient Pressure;
+        t04: Temperature in the combustion chamber exit;
+        u_i or mach: speed in m/s or mach number repectively;
+        gamma_d: cp/cv in the Diffuser;
+        gamma_f: cp/cv in the Fan;
+        gamma_c: cp/cv in the Compressor;
+        gamma_b: cp/cv in the Combustion Chamber;
+        gamma_t: cp/cv in the Turbine;
+        gamma_tl: cp/cv in the Free Turbine;
+        gamma_n: cp/cv in the Nozzle;
+        n_d: efficiency of the Diffuser;
+        n_c: efficiency of the Compressor;
+        n_b: efficiency of the Combustion Chamber;
+        n_t: efficiency of the Turbine;
+        n_tl: efficiency of the Free Turbine;
+        n_n: efficiency of the Nozzle;
+        prc: Compressor compression rate;
+        pr_tl: Free Turbine expansion rate;
+        pc_fuel: Heat of Combustion of the fuel;
+        cp_tl: Specific Heat in the combustion chamber;
+        cp_fuel: Specific Heat in the combustion chamber;
+        r: the air Gas Constant.
+        gearbox_power_ratio: power ratio between gearbox and turbine.
+        propeller_efficiency: efficiency of the Fan;
+    """
     def __init__(self, data:dict):
+        if "u_in" in data.keys():
+            speed = data.get("u_in")
+        elif "mach" in data.keys():
+            speed = u_from_mach(
+                data.get("mach"), data.get("ta"), data.get("gamma_d"), data.get("r")
+                )
+        else:
+            speed = 0
+
         self._n2 = 1
-        self._mass_flow0 = data.get('mass_flow')
-        self._aircraft_speed = data.get('u_in')
-        self._mass_flow = correct_mass_flow(self._mass_flow0, data.get('ta'), data.get('pa'))
+        self._mass_flow_sea_level = data.get('mass_flow')
+        self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('ta'), data.get('pa'))
+        self._aircraft_speed = speed
+        self._mass_flow = self._mass_flow0
         self.propeller_efficiency = data.get('propeller_efficiency')
         self.gearbox_power_ratio = data.get('gearbox_power_ratio')
 
@@ -18,7 +63,7 @@ class TurboProp:
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
             data.get('gamma_d'), data.get('r'),
-            data.get('u_in'), data.get('n_d')
+            self._aircraft_speed, data.get('n_d')
         )
 
         self.compressor = comp.Compressor(
@@ -70,7 +115,7 @@ class TurboProp:
 
     def _set_n2_mass_flow(self, n2):
         coef = [-6.6970E+00, 1.7001E+01, -1.2170E+01, 2.8717E+00]
-        self._mass_flow = self._mass_flow * np.polyval(coef, n2)
+        self._mass_flow = self._mass_flow0 * np.polyval(coef, n2)
     
     def update_model(self):
         self.compressor.t0i, self.compressor.p0i = self.air_entrance.t0f, self.air_entrance.p0f
@@ -82,7 +127,43 @@ class TurboProp:
         self.turbine_free.t0i, self.turbine_free.p0i = self.turbine_compressor.t0f, self.turbine_compressor.p0f
 
         self.nozzle.t0i, self.nozzle.p0i = self.turbine_free.t0f, self.turbine_free.p0f
+    
+    def sumarise(self):
+        data = pd.Series(dtype='float64')
 
+        for i in self.components:
+            comp_dict = i.sumarise()
+            for k,v in comp_dict.items():
+                data.loc[k] = v
+
+        return data.sort_index().to_frame(name=self._n2)
+
+    def sumarise_results(self):
+        data = pd.Series(dtype='float64')
+
+        
+        list_of_parameters = [
+            'specific_power_turbine', 
+            'turbine_power', 
+            'gearbox_power', 
+            'specific_thrust', 
+            'BSFC', 
+            'EBSFC', 
+            'TSFC', 
+            'thrust_hot_air', 
+            'thrust_propeller', 
+            'fuel_consumption', 
+            'thrust_total',
+            'mass_flow',
+            'aircraft_speed'
+            ]
+
+        for parameter in list_of_parameters:
+            result = getattr(self, parameter)
+            data.loc[parameter] = result
+
+        return data.sort_index().to_frame(name=self._n2)
+    
     @property
     def specific_power_turbine(self):
         specific_turbine_power = self.turbine_free.specific_work * (1 + self.combustion_chamber.f)
@@ -153,30 +234,12 @@ class TurboProp:
             TSFC = self.combustion_chamber.f * self._mass_flow/(self.thrust_hot_air+ self.thrust_propeller)
             return TSFC
         return None
+    
+    @property
+    def mass_flow(self):
+        return self._mass_flow
 
-    def sumarise(self):
-        data = pd.Series(dtype='float64')
-
-        for i in self.components:
-            comp_dict = i.sumarise()
-            for k,v in comp_dict.items():
-                data.loc[k] = v
-
-        return data.sort_index().to_frame(name=self._n2)
-
-    def sumarise_results(self):
-        data = pd.Series(dtype='float64')
-
-        
-        list_of_parameters = ['specific_power_turbine', 'turbine_power', 'gearbox_power', 
-        'specific_thrust', 'BSFC', 'EBSFC', 'TSFC', 'thrust_hot_air', 
-        'thrust_propeller', 'fuel_consumption', 'thrust_total']
-
-        for parameter in list_of_parameters:
-            result = getattr(self, parameter)
-            data.loc[parameter] = result
-
-
-        return data.sort_index().to_frame(name=self._n2)
-
+    @property
+    def aircraft_speed(self):
+        return self._aircraft_speed
 

@@ -13,7 +13,8 @@ class TurboFan:
     Parameters
     ----------
     data: dict
-        A dictionary with all the required input parameters for a TurboJet model.
+        A dictionary with all the required input parameters for a TurboFan model.
+        mass_flow: mass flow at sea level
         ta: Ambient Temperature;
         pa: Ambient Pressure;
         t04: Temperature in the combustion chamber exit;
@@ -59,7 +60,7 @@ class TurboFan:
 
         if self._has_mass_flow:
             self._mass_flow_sea_level = data.get('mass_flow')
-            self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
+            self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('ta'), data.get('pa'))
             self._mass_flow = self._mass_flow0
             self._hot_mass_flow = self._mass_flow / (data.get('bypass_ratio') + 1)
         else:
@@ -213,7 +214,7 @@ class TurboFan:
 
     @property
     def hot_specific_thrust(self):
-        return (1+self.combustion_chamber.f)*self.nozzle.u_s-self.air_entrance._ui
+        return (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
 
     @property
     def cold_specific_thrust(self):
