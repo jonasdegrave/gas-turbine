@@ -190,10 +190,12 @@ class Fan(Compressor):
         super().__init__(t0i, p0i, gamma, r, n_c, prc)
         self._bypass_ratio0 = bypass_ratio
         self.bypass_ratio = self._bypass_ratio0
+        self._n1=1
 
     def set_n2(self, n2):
         n1_constants = np.array([1.4166, -4.0478E-01])
         n1 = np.polyval(n1_constants, n2)
+        self._n1 = n1
         self.set_n1(n1)
 
     def set_n1(self, n1):
@@ -216,8 +218,8 @@ class Fan(Compressor):
         self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
     def sumarise(self):
-        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc]
+        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf','n1']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc, self._n1]
         return dict(zip(index, values))
 
 
@@ -306,6 +308,7 @@ class FanTurbine(Turbine):
         self.n_t = n_t
         self._n_t0 = n_t
         self.comp = compressor
+        self._n1 = 1
 
     def get_t0f(self):
         """
@@ -332,6 +335,7 @@ class FanTurbine(Turbine):
     def set_n2(self, n2):
         n1_constants = np.array([1.4166, -4.0478E-01])
         n1 = np.polyval(n1_constants, n2)
+        self._n1 = n1
         self.set_n1(n1)
 
     def set_n1(self, n1):
@@ -339,8 +343,8 @@ class FanTurbine(Turbine):
         self.n_t = self._n_t0 * np.polyval(n_t_constants, n1)
 
     def sumarise(self):
-        index = ['tet', 'pet', 't05', 'p05', 'gamma_tf', 'n_tf']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_t]
+        index = ['tet', 'pet', 't05', 'p05', 'gamma_tf', 'n_tf', 'n1']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_t, self._n1]
         return dict(zip(index, values))
 
 
