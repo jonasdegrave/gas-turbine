@@ -1,12 +1,55 @@
 import components as comp
 import pandas as pd
+from thermal_process import u_from_mach
 import numpy as np
 
 def correct_mass_flow(mass_flow, ta, pa):
     return mass_flow * (288.15/101.325) * (pa/ta)
 
 class TurboFan:
+    """
+    A class representative of a Turbo Fan Engine.
+
+    Parameters
+    ----------
+    data: dict
+        A dictionary with all the required input parameters for a TurboJet model.
+        ta: Ambient Temperature;
+        pa: Ambient Pressure;
+        t04: Temperature in the combustion chamber exit;
+        u_i or mach: speed in m/s or mach number repectively;
+        gamma_d: cp/cv in the Diffuser;
+        gamma_f: cp/cv in the Fan;
+        gamma_c: cp/cv in the Compressor;
+        gamma_b: cp/cv in the Combustion Chamber;
+        gamma_t: cp/cv in the Turbine;
+        gamma_tf: cp/cv in the Fan Turbine;
+        gamma_n: cp/cv in the Nozzle;
+        gamma_nf: cp/cv in the Fan Nozzle;
+        n_d: efficiency of the Diffuser;
+        n_f: efficiency of the Fan;
+        n_c: efficiency of the Compressor;
+        n_b: efficiency of the Combustion Chamber;
+        n_t: efficiency of the Turbine;
+        n_tf: efficiency of the Fan Turbine;
+        n_n: efficiency of the Nozzle;
+        n_nf: efficiency of the Fan Nozzle;
+        prc: Compressor compression rate;
+        prc: Fan compression rate;
+        pc_fuel: Heat of Combustion of the fuel;
+        cp_fuel: Specific Heat in the combustion chamber;
+        r: the air Gas Constant.
+    """
     def __init__(self, data:dict):
+        if "u_in" in data.keys():
+            speed = data.get("u_in")
+        elif "mach" in data.keys():
+            speed = u_from_mach(
+                data.get("mach"), data.get("ta"), data.get("gamma_d"), data.get("r")
+                )
+        else:
+            speed = 0
+
         self._n2 = 1
         self._mass_flow_sea_level = data.get('mass_flow')
         self._mass_flow0 = correct_mass_flow(self._mass_flow_sea_level, data.get('pa'), data.get('ta'))
@@ -16,12 +59,12 @@ class TurboFan:
         self.air_entrance = comp.Diffuser_Adiab(
             data.get('ta'), data.get('pa'),
             data.get('gamma_d'), data.get('r'),
-            data.get('u_in'), data.get('n_d')
+            speed, data.get('n_d')
         )
 
         self.fan = comp.Fan(
             self.air_entrance.t0f, self.air_entrance.p0f,
-            data.get('gamma_c'), data.get('r'),
+            data.get('gamma_f'), data.get('r'),
             data.get('n_f'), data.get('prf'), data.get('bypass_ratio')
         )
 
@@ -45,7 +88,7 @@ class TurboFan:
 
         self.fan_turbine = comp.FanTurbine(
             self.turbine.t0f, self.turbine.p0f,
-            data.get('gamma_t'), data.get('r'),
+            data.get('gamma_tf'), data.get('r'),
             data.get('n_tf'), self.fan    
         )
 
@@ -105,6 +148,13 @@ class TurboFan:
 
 
     def sumarise(self):
+        """
+        Summary of engine components parameters.
+        
+        Return
+        ------
+        A column DataFrame of all the components inlet and outlet properties for the current N2 rotation.
+        """
         data = pd.Series(dtype='float64')
 
         for i in self.components:
@@ -115,6 +165,13 @@ class TurboFan:
         return data.sort_index().to_frame(name=self._n2)
 
     def sumarise_results(self):
+        """
+        Summary of engine components parameters.
+        
+        Return
+        ------
+        A column DataFrame with the performance results for the motor in the given N2 rotation.
+        """
         data = pd.Series(dtype='float64')
 
         
