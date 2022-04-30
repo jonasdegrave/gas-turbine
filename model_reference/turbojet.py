@@ -126,7 +126,7 @@ class TurboJet:
         data = pd.Series(dtype='float64')
 
         
-        list_of_parameters = ['specific_thrust', 'TSFC']
+        list_of_parameters = ['specific_thrust', 'TSFC', 'thust_total','mass_flow']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
@@ -140,5 +140,13 @@ class TurboJet:
         return ((1+self.combustion_chamber.f)*self.nozzle.u_s-self.air_entrance._ui)
 
     @property
+    def thrust_total(self):
+        return self.specific_thrust * self._hot_mass_flow
+
+    @property
     def TSFC(self):
         return self.combustion_chamber.f / self.specific_thrust
+
+    @property
+    def mass_flow(self):
+        return self._mass_flow
