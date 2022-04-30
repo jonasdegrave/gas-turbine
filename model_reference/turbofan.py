@@ -1,6 +1,6 @@
-import components as comp
+from . import components as comp
 import pandas as pd
-from thermal_process import u_from_mach
+from .thermal_process import u_from_mach
 import numpy as np
 
 def correct_mass_flow(mass_flow, ta, pa):

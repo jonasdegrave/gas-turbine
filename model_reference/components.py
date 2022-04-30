@@ -1,4 +1,4 @@
-import thermal_process as tp
+from . import thermal_process as tp
 import numpy as np
 
 

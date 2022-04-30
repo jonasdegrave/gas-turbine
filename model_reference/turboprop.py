@@ -1,4 +1,4 @@
-import components as comp
+from . import components as comp
 import pandas as pd
 import numpy as np
 
