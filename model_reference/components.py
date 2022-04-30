@@ -105,7 +105,7 @@ class Nozzle_Adiab(tp.SpeedOutThermalProcess):
     def sumarise(self):
         
         if self.fan:
-            index = ['t08', 'p08', 'tff', 'pa', 'gamma_fn', 'n_fn', 'u_sf']
+            index = ['t08', 'p08', 'tff', 'pa', 'gamma_nf', 'n_nf', 'u_sf']
         else:
             index = ['t06', 'p06', 'tf', 'pa', 'gamma_n', 'n_n', 'u_s']
         values = [self.t0i, self.p0i, self.get_tfs(), self._pf, self._gamma, self.n_n, self.u_s]

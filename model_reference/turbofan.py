@@ -103,7 +103,7 @@ class TurboFan:
         )
 
         self.nozzle = comp.Nozzle_Adiab(
-            self.turbine.t0f, self.turbine.p0f,
+            self.fan_turbine.t0f, self.fan_turbine.p0f,
             data.get('gamma_n'), data.get('r'),
             data.get('pa'), data.get('n_n')
         )
@@ -111,7 +111,7 @@ class TurboFan:
         self.fan_nozzle = comp.Nozzle_Adiab(
             self.fan.t0f, self.fan.p0f,
             data.get('gamma_nf'), data.get('r'),
-            data.get('pa'), data.get('n_nf')
+            data.get('pa'), data.get('n_nf'), fan_nozzle=True
         )
 
         self.components = [
@@ -121,7 +121,8 @@ class TurboFan:
             self.combustion_chamber, 
             self.turbine, 
             self.fan_turbine, 
-            self.nozzle]
+            self.nozzle,
+            self.fan_nozzle]
 
     def _set_n2_mass_flow(self, n2):
         coef = [-6.6970E+00, 1.7001E+01, -1.2170E+01, 2.8717E+00]
