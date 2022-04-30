@@ -60,7 +60,7 @@ class Diffuser_Adiab(tp.SpeedInThermalProcess):
         return self.pi * (1 + self.n_d * (t_ratio - 1)) ** exp
 
     def sumarise(self):
-        index = ['ta', 'pa', 't02', 'p02', 'gamma_d', 'n_d', 'ui']
+        index = ['ta', 'pa', 't02', 'p02', 'gamma_d', 'n_d', 'u_i']
         values = [self.ti, self.pi, self.t0f, self.p0f, self._gamma, self.n_d, self._ui]
         return dict(zip(index, values))
 
