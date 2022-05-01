@@ -31,6 +31,7 @@ class TurboJet:
         prc: Compression rate;
         pc_fuel: Heat of Combustion of the fuel;
         cp_fuel: Specific Heat in the combustion chamber;
+        pressure_loss: Pressure loss in combustion chamber, in percentage;
         r: the air Gas Constant.
     """
     def __init__(self, data:dict):
@@ -42,6 +43,11 @@ class TurboJet:
                 )
         else:
             speed = 0
+
+        if "pressure_loss" in data.keys():
+            pressure_loss = data.get("pressure_loss")
+        else:
+            pressure_loss = 0
 
         if data.get("mass_flow") is None:
             self._has_mass_flow = False
@@ -71,7 +77,8 @@ class TurboJet:
 
         self.combustion_chamber = comp.CombustionChamber(self.compressor.t0f, self.compressor.p0f,
             data.get('gamma_b'), data.get('r'),
-            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b')
+            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b'),
+            pressure_loss=pressure_loss
         )
 
         self.turbine = comp.Turbine(self.combustion_chamber.t0f, self.combustion_chamber.p0f,

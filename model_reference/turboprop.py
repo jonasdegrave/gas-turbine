@@ -37,6 +37,7 @@ class TurboProp:
         pc_fuel: Heat of Combustion of the fuel;
         cp_tl: Specific Heat in the combustion chamber;
         cp_fuel: Specific Heat in the combustion chamber;
+        pressure_loss: Pressure loss in combustion chamber, in percentage;
         r: the air Gas Constant.
         gearbox_power_ratio: power ratio between gearbox and turbine.
         propeller_efficiency: efficiency of the Fan;
@@ -50,6 +51,11 @@ class TurboProp:
                 )
         else:
             speed = 0
+
+        if "pressure_loss" in data.keys():
+            pressure_loss = data.get("pressure_loss")
+        else:
+            pressure_loss = 0
 
         self._n2 = 1
         self._mass_flow_sea_level = data.get('mass_flow')
@@ -74,7 +80,8 @@ class TurboProp:
 
         self.combustion_chamber = comp.CombustionChamber(self.compressor.t0f, self.compressor.p0f,
             data.get('gamma_b'), data.get('r'),
-            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b')
+            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b'),
+            pressure_loss=pressure_loss
         )
 
         self.turbine_compressor = comp.Turbine(self.combustion_chamber.t0f, self.combustion_chamber.p0f,

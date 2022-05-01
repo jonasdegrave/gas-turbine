@@ -437,14 +437,15 @@ class CombustionChamber(tp.StaticThermalProcess):
         pc: The Heat of Combustion.
         n_b: The combustion chamber efficiency.
     """
-    def __init__(self, ti, pi, gamma, r, t0f, cp, pc, n_b):
+    def __init__(self, ti, pi, gamma, r, t0f, cp, pc, n_b, pressure_loss=0):
         super().__init__(ti, pi, gamma, r)
-        self.t0f = t0f
+        self._t0f = t0f
         self._t0f0 = t0f
         self._cp = cp
         self._pc = pc
         self.n_b = n_b
         self._n_b0 = n_b
+        self.pressure_loss = pressure_loss
 
 
     def get_f(self):
@@ -464,7 +465,7 @@ class CombustionChamber(tp.StaticThermalProcess):
         self.n_b = self._n_b0 * np.polyval(n_b_constants, n2)
 
         t0f_constants = np.array([8.1821E-1, -2.2401E-1, 4.1842E-1])
-        self.t0f = self._t0f0 * np.polyval(t0f_constants, n2)
+        self._t0f = self._t0f0 * np.polyval(t0f_constants, n2)
 
     def sumarise(self):
         index = ['t03', 'p03', 't04', 'p04', 'gamma_b', 'n_b', 'pc_comb', 'cp_comb', 'f']
@@ -475,7 +476,12 @@ class CombustionChamber(tp.StaticThermalProcess):
     def f(self):
         return self.get_f()
     
-
     @property
     def p0f(self):
-        return self.p0i
+        return self.p0i * (1-self.pressure_loss)
+
+    @property
+    def t0f(self):
+        exp = (self._gamma - 1) / self._gamma
+        t0f_with_press_loss = self._t0f * (self.p0f / self.p0i)**exp
+        return t0f_with_press_loss

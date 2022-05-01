@@ -39,6 +39,7 @@ class TurboFan:
         prc: Fan compression rate;
         pc_fuel: Heat of Combustion of the fuel;
         cp_fuel: Specific Heat in the combustion chamber;
+        pressure_loss: Pressure loss in combustion chamber, in percentage;
         r: the air Gas Constant.
     """
     def __init__(self, data:dict):
@@ -50,6 +51,11 @@ class TurboFan:
                 )
         else:
             speed = 0
+
+        if "pressure_loss" in data.keys():
+            pressure_loss = data.get("pressure_loss")
+        else:
+            pressure_loss = 0
 
         self._n2 = 1
 
@@ -88,7 +94,8 @@ class TurboFan:
         self.combustion_chamber = comp.CombustionChamber(
             self.compressor.t0f, self.compressor.p0f,
             data.get('gamma_b'), data.get('r'),
-            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b')
+            data.get('t04'), data.get('cp_fuel'), data.get('pc_fuel'), data.get('n_b'),
+            pressure_loss=pressure_loss
         )
 
         self.turbine = comp.Turbine(
@@ -214,8 +221,10 @@ class TurboFan:
 
     @property
     def hot_specific_thrust(self):
-        return (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
-
+        hst = (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
+        if np.isnan(hst):
+            return 0
+        return hst
     @property
     def cold_specific_thrust(self):
         return self.fan.bypass_ratio * (self.fan_nozzle.u_s - self.air_entrance._ui)
