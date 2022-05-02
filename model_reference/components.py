@@ -163,7 +163,7 @@ class Compressor(tp.StaticThermalProcess):
         prc_constants = np.array([-6.073, 1.4821E1, -1.0042E1, 2.2915])
         self.prc = np.polyval(prc_constants, n2) * self._prc0
 
-        n_c_constants = [ -1.1234, 2.1097, 1.8617E-2]
+        n_c_constants = [-1.1234, 2.1097, 1.8617E-2]
         self.n_c = np.polyval(n_c_constants, n2) * self._n_c0
 
 
@@ -213,7 +213,7 @@ class Fan(Compressor):
         prc_constants = np.array([a_coef, b_coef, c_coef])
         self.prc = self._prc0 * np.polyval(prc_constants, n1)
         
-        n_c_constants = [-6.6663, 17.752, - 17.469, 7.7181, - 0.32985]
+        n_c_constants = [-6.6663, 17.752, -17.469, 7.7181, -0.32985]
         self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
     def sumarise(self):
@@ -460,7 +460,7 @@ class CombustionChamber(tp.StaticThermalProcess):
         return (t_ratio - 1) / den
 
     def set_n2(self, n2):
-        n_b_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
+        n_b_constants = np.array([1.1630, -3.0851, 2.7312, 1.9130E-1])
         self.n_b = self._n_b0 * np.polyval(n_b_constants, n2)
 
         t0f_constants = np.array([8.1821E-1, -2.2401E-1, 4.1842E-1])
