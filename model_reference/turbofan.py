@@ -221,10 +221,12 @@ class TurboFan:
 
     @property
     def hot_specific_thrust(self):
-        hst = (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
-        if np.isnan(hst):
-            return 0
-        return hst
+        exit_speed = self.nozzle.u_s
+        if np.isnan(exit_speed):
+            return -self.air_entrance._ui
+        else:
+            return (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
+            
     @property
     def cold_specific_thrust(self):
         return self.fan.bypass_ratio * (self.fan_nozzle.u_s - self.air_entrance._ui)

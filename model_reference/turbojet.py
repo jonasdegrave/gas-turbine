@@ -156,7 +156,11 @@ class TurboJet:
 
     @property
     def specific_thrust(self):
-        return ((1+self.combustion_chamber.f)*self.nozzle.u_s-self.air_entrance._ui)
+        exit_speed = self.nozzle.u_s
+        if np.isnan(exit_speed):
+            return -self.air_entrance._ui
+        else:
+            return (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
 
     @property
     def thrust_total(self):
