@@ -199,6 +199,8 @@ class Fan(Compressor):
         self.set_n1(n1)
 
     def set_n1(self, n1):
+        bypass_ratio_constants = [-8.3241E-1, 3.8824E-1, 1.4263]
+        self.bypass_ratio = np.polyval(bypass_ratio_constants, n1) * self._bypass_ratio0
 
         a_coef_constants = [-0.00179, 0.00687, 0.5]
         a_coef = np.polyval(a_coef_constants, self._bypass_ratio0)
@@ -211,9 +213,6 @@ class Fan(Compressor):
         prc_constants = np.array([a_coef, b_coef, c_coef])
         self.prc = self._prc0 * np.polyval(prc_constants, n1)
         
-        bypass_ratio_constants = [-8.3241E-1, 3.8824E-1, 1.4263]
-        self.bypass_ratio = np.polyval(bypass_ratio_constants, n1) * self._bypass_ratio0
-
         n_c_constants = [-6.6663, 17.752, - 17.469, 7.7181, - 0.32985]
         self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
