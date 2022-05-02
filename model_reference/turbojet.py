@@ -14,8 +14,8 @@ class TurboJet:
     ----------
     data: dict
         A dictionary with all the required input parameters for a TurboJet model.
-        ta: Ambient Temperature;
-        pa: Ambient Pressure;
+        ta: Ambient Temperature in K;
+        pa: Ambient Pressure in kPa;
         t04: Temperature in the combustion chamber exit;
         u_i or mach: speed in m/s or mach number repectively;
         gamma_d: cp/cv in the Diffuser;
@@ -145,7 +145,7 @@ class TurboJet:
         data = pd.Series(dtype='float64')
 
         
-        list_of_parameters = ['specific_thrust', 'TSFC', 'thrust_total','mass_flow']
+        list_of_parameters = ['specific_thrust', 'TSFC', 'thrust_total','mass_flow','fuel_consumption']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
@@ -158,9 +158,9 @@ class TurboJet:
     def specific_thrust(self):
         exit_speed = self.nozzle.u_s
         if np.isnan(exit_speed):
-            return -self.air_entrance._ui
-        else:
-            return (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
+            exit_speed = 0
+        specific_thrust_newton = (1+self.combustion_chamber.f)*self.nozzle.u_s - self.air_entrance._ui
+        return specific_thrust_newton / 1000
 
     @property
     def thrust_total(self):
@@ -173,3 +173,7 @@ class TurboJet:
     @property
     def mass_flow(self):
         return self._mass_flow
+
+    @property
+    def fuel_consumption(self):
+        return self.TSFC * self.thrust_total

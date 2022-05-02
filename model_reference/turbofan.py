@@ -15,8 +15,8 @@ class TurboFan:
     data: dict
         A dictionary with all the required input parameters for a TurboFan model.
         mass_flow: mass flow at sea level
-        ta: Ambient Temperature;
-        pa: Ambient Pressure;
+        ta: Ambient Temperature in K;
+        pa: Ambient Pressure in kPa;
         t04: Temperature in the combustion chamber exit;
         u_i or mach: speed in m/s or mach number repectively;
         gamma_d: cp/cv in the Diffuser;
@@ -203,7 +203,8 @@ class TurboFan:
             'hot_specific_thrust',
             'mass_flow',
             'hot_mass_flow',
-            'cold_mass_flow']
+            'cold_mass_flow',
+            'fuel_consumption']
 
         for parameter in list_of_parameters:
             result = getattr(self, parameter)
@@ -213,7 +214,7 @@ class TurboFan:
 
     @property
     def specific_thrust(self):
-        return self.hot_specific_thrust + self.cold_specific_thrust
+        return (self.hot_specific_thrust + self.cold_specific_thrust)/1000
 
     @property
     def thrust_total(self):
@@ -254,4 +255,7 @@ class TurboFan:
     def cold_mass_flow(self):
         return self.mass_flow - self.hot_mass_flow
 
+    @property
+    def fuel_consumption(self):
+        return self.TSFC * self.thrust_total
 

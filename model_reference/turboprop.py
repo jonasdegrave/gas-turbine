@@ -15,8 +15,8 @@ class TurboProp:
     data: dict
         A dictionary with all the required input parameters for a TurboJet model.
         mass_flow: mass flow at sea level
-        ta: Ambient Temperature;
-        pa: Ambient Pressure;
+        ta: Ambient Temperature in K;
+        pa: Ambient Pressure in kPa;
         t04: Temperature in the combustion chamber exit;
         u_i or mach: speed in m/s or mach number repectively;
         gamma_d: cp/cv in the Diffuser;
