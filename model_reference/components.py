@@ -163,7 +163,7 @@ class Compressor(tp.StaticThermalProcess):
         prc_constants = np.array([-6.073, 1.4821E1, -1.0042E1, 2.2915])
         self.prc = np.polyval(prc_constants, n2) * self._prc0
 
-        n_c_constants = [ -1.1234, 2.1097, 1.8617E-2]
+        n_c_constants = [-1.1234, 2.1097, 1.8617E-2]
         self.n_c = np.polyval(n_c_constants, n2) * self._n_c0
 
 
@@ -199,27 +199,26 @@ class Fan(Compressor):
         self.set_n1(n1)
 
     def set_n1(self, n1):
-        
         bypass_ratio_constants = [-8.3241E-1, 3.8824E-1, 1.4263]
-        self.bypass_ratio = np.polyval(bypass_ratio_constants, self._bypass_ratio0) * self._bypass_ratio0
+        self.bypass_ratio = np.polyval(bypass_ratio_constants, n1) * self._bypass_ratio0
 
         a_coef_constants = [-0.00179, 0.00687, 0.5]
-        a_coef = np.polyval(a_coef_constants, self.bypass_ratio)
+        a_coef = np.polyval(a_coef_constants, self._bypass_ratio0)
 
         b_coef = -4.3317E-2
 
         c_coef_constants = [ 0.011, 0.53782]
-        c_coef = np.polyval(c_coef_constants, self.bypass_ratio)
+        c_coef = np.polyval(c_coef_constants, self._bypass_ratio0)
         
         prc_constants = np.array([a_coef, b_coef, c_coef])
         self.prc = self._prc0 * np.polyval(prc_constants, n1)
-
-        n_c_constants = [-6.6663, 17.752, - 17.469, 7.7181, - 0.32985]
+        
+        n_c_constants = [-6.6663, 17.752, -17.469, 7.7181, -0.32985]
         self.n_c = self._n_c0 * np.polyval(n_c_constants, n1)
 
     def sumarise(self):
-        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf','n1']
-        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc, self._n1]
+        index = ['t02', 'p02', 't08', 'p08', 'gamma_f', 'n_f', 'prf','n1','bypass_ratio']
+        values = [self.t0i, self.p0i, self.t0f, self.p0f, self._gamma, self.n_c, self.prc, self._n1, self.bypass_ratio]
         return dict(zip(index, values))
 
 
@@ -437,14 +436,15 @@ class CombustionChamber(tp.StaticThermalProcess):
         pc: The Heat of Combustion.
         n_b: The combustion chamber efficiency.
     """
-    def __init__(self, ti, pi, gamma, r, t0f, cp, pc, n_b):
+    def __init__(self, ti, pi, gamma, r, t0f, cp, pc, n_b, pressure_loss=0):
         super().__init__(ti, pi, gamma, r)
-        self.t0f = t0f
+        self._t0f = t0f
         self._t0f0 = t0f
         self._cp = cp
         self._pc = pc
         self.n_b = n_b
         self._n_b0 = n_b
+        self.pressure_loss = pressure_loss
 
 
     def get_f(self):
@@ -460,11 +460,11 @@ class CombustionChamber(tp.StaticThermalProcess):
         return (t_ratio - 1) / den
 
     def set_n2(self, n2):
-        n_b_constants = np.array([-6.7490E-2, 2.5640E-1, 8.1153E-1])
+        n_b_constants = np.array([1.1630, -3.0851, 2.7312, 1.9130E-1])
         self.n_b = self._n_b0 * np.polyval(n_b_constants, n2)
 
         t0f_constants = np.array([8.1821E-1, -2.2401E-1, 4.1842E-1])
-        self.t0f = self._t0f0 * np.polyval(t0f_constants, n2)
+        self._t0f = self._t0f0 * np.polyval(t0f_constants, n2)
 
     def sumarise(self):
         index = ['t03', 'p03', 't04', 'p04', 'gamma_b', 'n_b', 'pc_comb', 'cp_comb', 'f']
@@ -475,7 +475,12 @@ class CombustionChamber(tp.StaticThermalProcess):
     def f(self):
         return self.get_f()
     
-
     @property
     def p0f(self):
-        return self.p0i
+        return self.p0i * (1-self.pressure_loss)
+
+    @property
+    def t0f(self):
+        exp = (self._gamma - 1) / self._gamma
+        t0f_with_press_loss = self._t0f * (self.p0f / self.p0i)**exp
+        return t0f_with_press_loss
