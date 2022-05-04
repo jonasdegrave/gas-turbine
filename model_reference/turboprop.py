@@ -4,7 +4,9 @@ from .thermal_process import u_from_mach
 import numpy as np
 
 def correct_mass_flow(mass_flow, ta, pa):
-    return mass_flow * (288.15/101.325) * (pa/ta)
+    if mass_flow is not None:
+        return mass_flow * (288.15/101.325) * (pa/ta)
+    return None
 
 class TurboProp:
     """
@@ -15,8 +17,8 @@ class TurboProp:
     data: dict
         A dictionary with all the required input parameters for a TurboJet model.
         mass_flow: mass flow at sea level
-        ta: Ambient Temperature in K;
-        pa: Ambient Pressure in kPa;
+        ta: Ambient Temperature;
+        pa: Ambient Pressure;
         t04: Temperature in the combustion chamber exit;
         u_i or mach: speed in m/s or mach number repectively;
         gamma_d: cp/cv in the Diffuser;
@@ -121,8 +123,9 @@ class TurboProp:
 
 
     def _set_n2_mass_flow(self, n2):
-        coef = [-6.6970E+00, 1.7001E+01, -1.2170E+01, 2.8717E+00]
-        self._mass_flow = self._mass_flow0 * np.polyval(coef, n2)
+        if self._mass_flow is not None:
+            coef = [-6.6970E+00, 1.7001E+01, -1.2170E+01, 2.8717E+00]
+            self._mass_flow = self._mass_flow0 * np.polyval(coef, n2)
     
     def update_model(self):
         self.compressor.t0i, self.compressor.p0i = self.air_entrance.t0f, self.air_entrance.p0f
@@ -185,8 +188,10 @@ class TurboProp:
 
     @property
     def gearbox_power(self):
-        gearbox_power = self.turbine_power * self.gearbox_power_ratio
-        return gearbox_power
+        if self._mass_flow is not None:
+            gearbox_power = self.turbine_power * self.gearbox_power_ratio
+            return gearbox_power
+        return None
 
     @property
     def specific_thrust(self):
@@ -216,16 +221,18 @@ class TurboProp:
     
     @property
     def thrust_propeller(self):
-        if self._aircraft_speed > 0:
-            thrust_propeller = self.gearbox_power * self.propeller_efficiency / self._aircraft_speed
-        else:
-            thrust_propeller = 0
-
-        return thrust_propeller
+        if self._mass_flow is not None:
+            if self._aircraft_speed > 0:
+                thrust_propeller = self.gearbox_power * self.propeller_efficiency / self._aircraft_speed
+                return thrust_propeller
+            return 0
+        return None
 
     @property
     def thrust_total(self):
-        return self.thrust_hot_air + self.thrust_propeller
+        if self._mass_flow is not None:
+            return self.thrust_hot_air + self.thrust_propeller
+        return None
         
 
     @property
