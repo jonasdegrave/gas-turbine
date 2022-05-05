@@ -93,7 +93,7 @@ class TurboProp:
 
         self.turbine_free = comp.FreeTurbine(self.turbine_compressor.t0f, self.turbine_compressor.p0f,
             data.get('gamma_tl'), data.get('r'),
-            data.get('n_tl'), data.get('pr_tl'), data.get('cp_tl')
+            data.get('n_tl'), data.get('pr_tl'), data.get('cp_tl'), data.get('cp_tls')
         )
 
         self.nozzle = comp.Nozzle_Adiab(self.turbine_free.t0f, self.turbine_free.p0f,
