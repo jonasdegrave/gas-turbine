@@ -360,13 +360,14 @@ class FreeTurbine(tp.StaticThermalProcess):
         n_t: The turbine efficiency.
         bypass_ratio: The bypass_ratio for Turbofans.
     """
-    def __init__(self, t0i, p0i, gamma, r, n_t, prt, cp):
+    def __init__(self, t0i, p0i, gamma, r, n_t, prt, cp, cp_s):
         super().__init__(t0i, p0i, gamma, r)
         self.n_t = n_t
         self._n_t0 = n_t
         self._prt = prt
         self.prt = prt
         self.cp = cp
+        self.cp_s = cp_s
 
     def get_t0f(self):
         """
@@ -377,7 +378,7 @@ class FreeTurbine(tp.StaticThermalProcess):
             The turbine final total (stagnation) temperature.
         """
         exp = (self._gamma - 1) / self._gamma
-        t0f = self.t0i * (1 - self.n_t * (1 - (1/self.prt)**exp))
+        t0f = self.t0i * (1 - self.n_t * self.cp_s / self.cp * (1 - (1/self.prt)**exp))
         return t0f
 
     def get_p0f(self):
