@@ -15819,8 +15819,34 @@ compressor de 8,49 kg/s, razão de pressão do compressor 15,77 e temperatura de
 <span class="n">axis1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">2457</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;given turbine power&#39;</span><span class="p">)</span>
 <span class="n">axis1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">2.87</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">axis1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig1</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;images/questao1/ex7_1_a.jpg&#39;</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;jpeg&#39;</span><span class="p">,</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 
 <span class="n">performance_results</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;p06&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;t06&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_power_turbine_mf&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_flow_turbine&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;turbine_power&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u_s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_thrust&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thrust_hot_air&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;BSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;gearbox_power&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;EBSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;fuel_consumption&#39;</span>
+    <span class="p">]</span>
+
+
+<span class="n">values</span><span class="p">[</span><span class="s2">&quot;pr_tl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.87</span>
+<span class="n">turboprop</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">TurboProp</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise_results</span><span class="p">()</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">performance_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">performance_result</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
      </div>
@@ -15835,7 +15861,8 @@ compressor de 8,49 kg/s, razão de pressão do compressor 15,77 e temperatura de
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Resultados:">Resultados:<a class="anchor-link" href="#Resultados:">&#182;</a></h3><p>Variamos a taxa de expansão da turbina para encontrar a potência da turbina que corresponde à potência da turbina dada pelo fabricante.</p>
+<h3 id="Resultados:">Resultados:<a class="anchor-link" href="#Resultados:">&#182;</a></h3><p>Variamos a taxa de expansão da turbina para encontrar a potência da turbina que corresponde à potência da turbina dada pelo fabricante. A imagem a seguir mostra os resultados obtidos:</p>
+<p><img src="images/questao1/ex7_1_a.jpg" style="width: 600px;"/></p>
 <p>A partir dos resultados acima, encontramos os seguintes parâmetros para calibrar o modelo:</p>
 <table>
 <thead><tr>
@@ -15851,6 +15878,109 @@ compressor de 8,49 kg/s, razão de pressão do compressor 15,77 e temperatura de
 <tr>
 <td>% de rotação máxima no compressor</td>
 <td>1,00</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Compara%C3%A7%C3%A3o-de-resultados">Compara&#231;&#227;o de resultados<a class="anchor-link" href="#Compara%C3%A7%C3%A3o-de-resultados">&#182;</a></h4><table>
+<thead><tr>
+<th>Parâmetro</th>
+<th>Unidade</th>
+<th>Modelo</th>
+<th>Referência do material</th>
+<th>$\Delta$ em %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Razão de Pressão na Turbina Livre</td>
+<td>[ ]</td>
+<td>2.87</td>
+<td>2.87</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td>Press. Total na saída da Turbina livre</td>
+<td>kPa</td>
+<td>135.944</td>
+<td>135.98</td>
+<td>-0.021</td>
+</tr>
+<tr>
+<td>Temp. total na saída da Turbina livre</td>
+<td>K</td>
+<td>931.58</td>
+<td>931.58</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td>Trabalho por vazão da Turbina livre</td>
+<td>kJ.s/kg</td>
+<td>282.358</td>
+<td>282,83</td>
+<td>-0.161</td>
+</tr>
+<tr>
+<td>Vazão na turbina</td>
+<td>kg/s</td>
+<td>8.68121</td>
+<td>8.69</td>
+<td>-0.107</td>
+</tr>
+<tr>
+<td>Potência da turbina (termodinâmica)</td>
+<td>kW</td>
+<td>2451.21</td>
+<td>2456.49</td>
+<td>-0.210</td>
+</tr>
+<tr>
+<td>Velocidade de saída do bocal</td>
+<td>m/s</td>
+<td>385.967</td>
+<td>385.97</td>
+<td>-0.002</td>
+</tr>
+<tr>
+<td>Empuxo Específico do bocal</td>
+<td>kN.s/kg</td>
+<td>0.394757</td>
+<td>0.395</td>
+<td>-0.067</td>
+</tr>
+<tr>
+<td>Empuxo do bocal</td>
+<td>kN</td>
+<td>3.35066</td>
+<td>3.352</td>
+<td>-0.033</td>
+</tr>
+<tr>
+<td>Consumo Específico (BSFC)</td>
+<td>kg/(kN.s)</td>
+<td>7.88615e-05</td>
+<td>7.87E-05</td>
+<td>0.205</td>
+</tr>
+<tr>
+<td>Potência na caixa de redução</td>
+<td>kW</td>
+<td>2402.19</td>
+<td>2407.356</td>
+<td>-0.214</td>
+</tr>
+<tr>
+<td>Consumo Específico (EBSFC)</td>
+<td>kg/(kN.s)</td>
+<td>7.88615e-05</td>
+<td>7.87E-05</td>
+<td>0.205</td>
+</tr>
+<tr>
+<td>Consumo de combustível</td>
+<td>kg/s</td>
+<td>0.193306</td>
+<td>0.193</td>
+<td>0.158</td>
 </tr>
 </tbody>
 </table>
@@ -15929,8 +16059,37 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 <span class="n">axis1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">2050</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gearbox Limit Power&#39;</span><span class="p">)</span>
 <span class="n">axis1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.941</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">axis1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig1</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;images/questao1/ex7_1_b.jpg&#39;</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;jpeg&#39;</span><span class="p">,</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 
 <span class="n">performance_results</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;t04&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;p04&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;p06&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;t06&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_power_turbine_mf&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_flow_turbine&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;turbine_power&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u_s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_thrust&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thrust_hot_air&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;BSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;gearbox_power&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;fuel_consumption&#39;</span>
+    <span class="p">]</span>
+
+
+
+<span class="n">turboprop</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">TurboProp</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="n">turboprop</span><span class="o">.</span><span class="n">set_n2</span><span class="p">(</span><span class="mf">0.941</span><span class="p">)</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise_results</span><span class="p">()</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">performance_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">performance_result</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
      </div>
@@ -15945,6 +16104,8 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A imagem a seguir mostra a variação da potência em função da rotação do motor, para determinar a rotação máxima correspondente ao limite da caixa de redução:</p>
+<p><img src="images/questao1/ex7_1_b.jpg" style="width: 600px;"/></p>
 <p>Parâmetros do motor variados para atingir o desempenho do fabricante:</p>
 <table>
 <thead><tr>
@@ -15960,6 +16121,141 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 <tr>
 <td>% de rotação máxima no compressor</td>
 <td>0,941</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Compara%C3%A7%C3%A3o-de-resultados">Compara&#231;&#227;o de resultados<a class="anchor-link" href="#Compara%C3%A7%C3%A3o-de-resultados">&#182;</a></h4><table>
+<thead><tr>
+<th>Parâmetro</th>
+<th>Unidade</th>
+<th>Modelo</th>
+<th>Referência do material</th>
+<th>$\Delta$ em %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>% da rotação máxima do compressor</td>
+<td>[ ]</td>
+<td>0.941</td>
+<td>0.941</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td>Razão de Pressão na Turbina Livre</td>
+<td>[ ]</td>
+<td>2.87</td>
+<td>2.87</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td>Temp. total na saída da Camara</td>
+<td>K</td>
+<td>1491.42</td>
+<td>1491.87</td>
+<td>-0.0301</td>
+</tr>
+<tr>
+<td>Press. Total na saída da Camara</td>
+<td>kPa</td>
+<td>1446.44</td>
+<td>1447.03</td>
+<td>-0.0407</td>
+</tr>
+<tr>
+<td>Razão combustivel/ar</td>
+<td>[ ]</td>
+<td>0.0206016</td>
+<td>0.02061</td>
+<td>-0.0407</td>
+</tr>
+<tr>
+<td>Press. Total na saída da Turbina livre</td>
+<td>kPa</td>
+<td>119.654</td>
+<td>119.68</td>
+<td>-0.0217</td>
+</tr>
+<tr>
+<td>Temp. total na saída da Turbina livre</td>
+<td>K</td>
+<td>863.739</td>
+<td>863.96</td>
+<td>-0.0255</td>
+</tr>
+<tr>
+<td>Trabalho por vazão da Turbina livre</td>
+<td>kJ.s/kg</td>
+<td>264.167</td>
+<td>264.69</td>
+<td>-0.1975</td>
+</tr>
+<tr>
+<td>Vazão na turbina</td>
+<td>kg/s</td>
+<td>7.74105</td>
+<td>7.75</td>
+<td>-0.1154</td>
+</tr>
+<tr>
+<td>Potência da turbina (termodinâmica)</td>
+<td>kW</td>
+<td>2044.93</td>
+<td>2050.13</td>
+<td>-0.2536</td>
+</tr>
+<tr>
+<td>Velocidade de saída do bocal</td>
+<td>m/s</td>
+<td>281.973</td>
+<td>282.18</td>
+<td>-0.0733</td>
+</tr>
+<tr>
+<td>Empuxo Específico do bocal</td>
+<td>kN.s/kg</td>
+<td>0.287782</td>
+<td>0.288</td>
+<td>-0.0756</td>
+</tr>
+<tr>
+<td>Empuxo do bocal</td>
+<td>kN</td>
+<td>2.18277</td>
+<td>2.186</td>
+<td>-0.1477</td>
+</tr>
+<tr>
+<td>Consumo Específico (BSFC)</td>
+<td>kg/(kN.s)</td>
+<td>7.64128e-05</td>
+<td>7.63e-05</td>
+<td>0.1478</td>
+</tr>
+<tr>
+<td>Potência na caixa de redução</td>
+<td>kW</td>
+<td>2004.03</td>
+<td>2009.131</td>
+<td>-0.2538</td>
+</tr>
+<tr>
+<td>Consumo de combustível</td>
+<td>kg/s</td>
+<td>0.156259</td>
+<td>0.156</td>
+<td>0.1660</td>
 </tr>
 </tbody>
 </table>
@@ -16159,6 +16455,29 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 <span class="n">thermodynamic_results1</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">()</span>
 
 <span class="n">performance_results1</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;p06&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;t06&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_power_turbine_mf&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_flow_turbine&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;turbine_power&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;u_s&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specific_thrust&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thrust_hot_air&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;BSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;gearbox_power&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;thrust_propeller&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;thrust_total&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;EBSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;TSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;fuel_consumption&#39;</span>
+    <span class="p">]</span>
+
+
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise_results</span><span class="p">()</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">performance_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">performance_result</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
      </div>
@@ -16166,6 +16485,134 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 </div>
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Compara%C3%A7%C3%A3o-de-resultados">Compara&#231;&#227;o de resultados<a class="anchor-link" href="#Compara%C3%A7%C3%A3o-de-resultados">&#182;</a></h4><table>
+<thead><tr>
+<th>Parâmetro</th>
+<th>Unidade</th>
+<th>Modelo</th>
+<th>Referência do material</th>
+<th>$\Delta$ em %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Press. Total na saída da Turbina livre</td>
+<td>kPa</td>
+<td>55.8689</td>
+<td>55.87</td>
+<td>-0.0019</td>
+</tr>
+<tr>
+<td>Temp. total na saída da Turbina livre</td>
+<td>K</td>
+<td>798.767</td>
+<td>798.77</td>
+<td>-0.0003</td>
+</tr>
+<tr>
+<td>Trabalho por vazão da Turbina livre</td>
+<td>kJ.s/kg</td>
+<td>221.816</td>
+<td>222.19</td>
+<td>-0.1683</td>
+</tr>
+<tr>
+<td>Vazão na turbina</td>
+<td>kg/s</td>
+<td>2.85347</td>
+<td>2.85</td>
+<td>0.1217</td>
+</tr>
+<tr>
+<td>Potência da turbina (termodinâmica)</td>
+<td>kW</td>
+<td>632.945</td>
+<td>634.00</td>
+<td>-0.1664</td>
+</tr>
+<tr>
+<td>Velocidade de saída do bocal</td>
+<td>m/s</td>
+<td>366.196</td>
+<td>366.20</td>
+<td>-0.0010</td>
+</tr>
+<tr>
+<td>Empuxo Específico do bocal</td>
+<td>kN.s/kg</td>
+<td>0.231</td>
+<td>0.231</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td>Empuxo do bocal</td>
+<td>kN</td>
+<td>0.647313</td>
+<td>0.647</td>
+<td>0.0483</td>
+</tr>
+<tr>
+<td>Consumo Específico no eixo (BSFC)</td>
+<td>kg/(kW.s)</td>
+<td>8.29033e-05</td>
+<td>8,28E-05</td>
+<td>0.1247</td>
+</tr>
+<tr>
+<td>Potência na caixa de redução</td>
+<td>kW</td>
+<td>620.286</td>
+<td>621.323</td>
+<td>-0.1669</td>
+</tr>
+<tr>
+<td>Empuxo produzido pela hélice</td>
+<td>kN</td>
+<td>3.71415</td>
+<td>3.720</td>
+<td>-0.1572</td>
+</tr>
+<tr>
+<td>Empuxo total</td>
+<td>kN</td>
+<td>4.36146</td>
+<td>4.368</td>
+<td>-0.1497</td>
+</tr>
+<tr>
+<td>Consumo Específico equivalente(EBSFC)</td>
+<td>kg/(kW.s)</td>
+<td>7.23934e-05</td>
+<td>7.23e-05</td>
+<td>0.1291</td>
+</tr>
+<tr>
+<td>Consumo Específico empuxo (TSFC)</td>
+<td>kg/(kN.s)</td>
+<td>0.0120311</td>
+<td>0.012</td>
+<td>0.2591</td>
+</tr>
+<tr>
+<td>Consumo de combustível</td>
+<td>kg/s</td>
+<td>0.0524732</td>
+<td>0.052</td>
+<td>0.9100</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
@@ -16397,6 +16844,21 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 <span class="n">thermodynamic_results1</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">()</span>
 
 <span class="n">performance_results1</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;specific_thrust&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_flow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;cold_mass_flow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;hot_mass_flow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thrust_total&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;TSFC&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;fuel_consumption&#39;</span>
+    <span class="p">]</span>
+
+
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise_results</span><span class="p">()</span>
+<span class="n">performance_result</span> <span class="o">=</span> <span class="n">performance_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">turboprop</span><span class="o">.</span><span class="n">sumarise</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">performance_result</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
      </div>
@@ -16404,6 +16866,78 @@ Assim, a solução consiste em reduzir a rotação do compressor.</p>
 </div>
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Compara%C3%A7%C3%A3o-de-resultados">Compara&#231;&#227;o de resultados<a class="anchor-link" href="#Compara%C3%A7%C3%A3o-de-resultados">&#182;</a></h4><table>
+<thead><tr>
+<th>Parâmetro</th>
+<th>Unidade</th>
+<th>Modelo</th>
+<th>Referência do material</th>
+<th>$\Delta$ em %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Empuxo Específico do bocal</td>
+<td>kN.s/kg</td>
+<td>0.926056</td>
+<td>0.8849</td>
+<td>4.65092</td>
+</tr>
+<tr>
+<td>Vazão massica</td>
+<td>kg/s</td>
+<td>29.1712</td>
+<td>29.18</td>
+<td>-0.03015</td>
+</tr>
+<tr>
+<td>Vazão massica do gerador de gas</td>
+<td>kg/s</td>
+<td>24.3576</td>
+<td>24.365</td>
+<td>-0.03037</td>
+</tr>
+<tr>
+<td>Vazão massica do bocal de fan</td>
+<td>kg/s</td>
+<td>4.81367</td>
+<td>4.814</td>
+<td>-0.00685</td>
+</tr>
+<tr>
+<td>Empuxo total</td>
+<td>kN</td>
+<td>4.45773</td>
+<td>4.26</td>
+<td>4.64154</td>
+</tr>
+<tr>
+<td>Consumo Específico empuxo (TSFC)</td>
+<td>kg/(kN.s)</td>
+<td>0.020879</td>
+<td>0.02186</td>
+<td>-4.48764</td>
+</tr>
+<tr>
+<td>Consumo de combustível</td>
+<td>kg/s</td>
+<td>0.0930729</td>
+<td>0.09313</td>
+<td>-0.06131</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
