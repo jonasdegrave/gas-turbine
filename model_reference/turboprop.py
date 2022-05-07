@@ -238,7 +238,7 @@ class TurboProp:
     @property
     def fuel_consumption(self):
         if self._mass_flow is not None:
-            fuel_consumption = self.turbine_power * self.EBSFC
+            fuel_consumption = self.turbine_power * self.BSFC
             return fuel_consumption 
         return None
 
